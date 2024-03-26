@@ -10,12 +10,11 @@ import java.io.File;
 
 public class UserInterface {
     private static final String DATA_PATH = "Tess4J/tessdata";
+    private static JButton convertButton;
     private JFrame frame;
     private OCR ocr;
     private JTextArea textArea;
-    private JScrollPane scrollPane;
-    private JButton convertButton;
-    private JButton selectButton;
+    private FileDragAndDrop fileDragAndDrop;
 
     public UserInterface() {
         initialize();
@@ -23,10 +22,11 @@ public class UserInterface {
 
     private void initialize() {
         this.frame = new JFrame();
-        this.scrollPane = createScrollPane();
-        this.convertButton = new JButton("Convert");
+        this.fileDragAndDrop = new FileDragAndDrop();
+        convertButton = new JButton("Convert");
         convertButton.setEnabled(false);
-        this.selectButton = new JButton("Select image");
+        JScrollPane scrollPane = createScrollPane();
+        JButton selectButton = new JButton("Select image");
         frame.setTitle("OCR Project");
 //        frame.setIconImage();
         frame.setLayout(new MigLayout("debug"));
@@ -60,13 +60,13 @@ public class UserInterface {
         });
 
         convertButton.addActionListener(e -> {
+            this.ocr = new OCR(fileDragAndDrop.getFile(), DATA_PATH);
             textArea.setText(ocr.getText());
         });
 
         selectButton.addActionListener(e -> {
-            File image = getImageFromFileChooser();
-            this.ocr = new OCR(image, DATA_PATH);
-            convertButton.setEnabled(true);
+            this.ocr = new OCR(getImageFromFileChooser(), DATA_PATH);
+            enableConversion();
         });
     }
 
@@ -84,17 +84,21 @@ public class UserInterface {
     private JScrollPane createScrollPane() {
         this.textArea = new JTextArea();
         JScrollPane scrollPane = new JScrollPane(textArea, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        textArea.setPreferredSize(new Dimension(500, 600));
+        scrollPane.setPreferredSize(new Dimension(600, 600));
+        textArea.setWrapStyleWord(true);
         textArea.setFont(new Font("Arial", Font.PLAIN, 16));
         return scrollPane;
     }
 
     private JPanel createDragAndDropPanel() {
-        FileDragAndDrop fileDragAndDrop = new FileDragAndDrop();
         JPanel dropPanel = fileDragAndDrop.getDropPanel();
-        dropPanel.setBorder(BorderFactory.createTitledBorder("Drop a File Here"));
+        dropPanel.setBorder(BorderFactory.createTitledBorder("Drop a image here"));
         dropPanel.setTransferHandler(fileDragAndDrop);
         dropPanel.setPreferredSize(new Dimension(200, 200));
         return dropPanel;
+    }
+
+    public static void enableConversion() {
+        convertButton.setEnabled(true);
     }
 }

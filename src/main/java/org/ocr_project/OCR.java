@@ -14,6 +14,10 @@ public class OCR {
         this.dataPath = dataPath;
     }
 
+    public void setImage(File image) {
+        this.image = image;
+    }
+
     public String getText() {
         Tesseract tesseract = new Tesseract();
 

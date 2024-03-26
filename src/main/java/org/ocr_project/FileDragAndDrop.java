@@ -1,12 +1,13 @@
 package org.ocr_project;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.datatransfer.*;
 import java.io.File;
+import java.util.List;
 
 public class FileDragAndDrop extends TransferHandler {
     private final JPanel dropPanel;
+    private File file;
 
     FileDragAndDrop() {
         this.dropPanel = new JPanel();
@@ -29,12 +30,13 @@ public class FileDragAndDrop extends TransferHandler {
         Transferable transferable = support.getTransferable();
         try {
             @SuppressWarnings("unchecked")
-            java.util.List<File> files = (java.util.List<File>) transferable.getTransferData(DataFlavor.javaFileListFlavor);
+            List<File> files = (List<File>) transferable.getTransferData(DataFlavor.javaFileListFlavor);
             if (files.size() != 1) {
                 return false; // Only accept one file
             }
-            File file = files.getFirst();
+            this.file = files.getFirst();
             // Do something with the dropped file, for example, display its name
+            UserInterface.enableConversion();
             JLabel label = new JLabel(file.getName());
             dropPanel.add(label);
             dropPanel.revalidate();
@@ -43,5 +45,9 @@ public class FileDragAndDrop extends TransferHandler {
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }
+    }
+
+    public File getFile() {
+        return file;
     }
 }
