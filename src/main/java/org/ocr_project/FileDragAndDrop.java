@@ -1,6 +1,7 @@
 package org.ocr_project;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.datatransfer.*;
 import java.io.File;
 import java.util.List;
@@ -8,9 +9,21 @@ import java.util.List;
 public class FileDragAndDrop extends TransferHandler {
     private final JPanel dropPanel;
     private File file;
+    private ImageIcon imageIcon;
+    private final JLabel imageLabel;
+    private final JLabel fileNameLabel;
 
     FileDragAndDrop() {
-        this.dropPanel = new JPanel();
+        this.dropPanel = new JPanel(new BorderLayout());
+        this.imageIcon = new ImageIcon(new ImageIcon("src/main/resources/upload.png").getImage().getScaledInstance(256, 256, Image.SCALE_SMOOTH));
+        this.imageLabel = new JLabel(imageIcon);
+        this.fileNameLabel = new JLabel("Drop a file here");
+
+        fileNameLabel.setFont(new Font("Arial", Font.PLAIN, 22));
+        fileNameLabel.setHorizontalAlignment(SwingConstants.CENTER);
+
+        dropPanel.add(fileNameLabel, BorderLayout.NORTH);
+        dropPanel.add(imageLabel, BorderLayout.CENTER);
     }
 
     public JPanel getDropPanel() {
@@ -37,8 +50,9 @@ public class FileDragAndDrop extends TransferHandler {
             this.file = files.getFirst();
             // Do something with the dropped file, for example, display its name
             UserInterface.enableConversion();
-            JLabel label = new JLabel(file.getName());
-            dropPanel.add(label);
+            this.imageIcon = new ImageIcon(new ImageIcon(file.getPath()).getImage().getScaledInstance(372, 480, Image.SCALE_SMOOTH));
+            imageLabel.setIcon(imageIcon);
+            fileNameLabel.setText(file.getName());
             dropPanel.revalidate();
             dropPanel.repaint();
             return true;

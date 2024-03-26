@@ -11,6 +11,8 @@ import java.io.File;
 public class UserInterface {
     private static final String DATA_PATH = "Tess4J/tessdata";
     private static JButton convertButton;
+    private static JButton clearButton;
+    private static JButton saveButton;
     private JFrame frame;
     private OCR ocr;
     private JTextArea textArea;
@@ -24,6 +26,8 @@ public class UserInterface {
         this.frame = new JFrame();
         this.fileDragAndDrop = new FileDragAndDrop();
         convertButton = new JButton("Convert");
+        clearButton = new JButton("Clear");
+        saveButton = new JButton("Save");
         convertButton.setEnabled(false);
         JScrollPane scrollPane = createScrollPane();
         JButton selectButton = new JButton("Select image");
@@ -38,7 +42,9 @@ public class UserInterface {
         frame.add(createDragAndDropPanel(),"grow, push");
         frame.add(scrollPane, "wrap");
         frame.add(selectButton);
-        frame.add(convertButton);
+        frame.add(convertButton, "split3");
+        frame.add(saveButton);
+        frame.add(clearButton);
         frame.pack();
         frame.setLocationByPlatform(true);
         frame.setVisible(true);
@@ -92,9 +98,8 @@ public class UserInterface {
 
     private JPanel createDragAndDropPanel() {
         JPanel dropPanel = fileDragAndDrop.getDropPanel();
-        dropPanel.setBorder(BorderFactory.createTitledBorder("Drop a image here"));
         dropPanel.setTransferHandler(fileDragAndDrop);
-        dropPanel.setPreferredSize(new Dimension(200, 200));
+        dropPanel.setPreferredSize(new Dimension(400, 400));
         return dropPanel;
     }
 
