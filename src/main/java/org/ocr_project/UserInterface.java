@@ -1,17 +1,21 @@
 package org.ocr_project;
 
+import net.miginfocom.swing.MigLayout;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
-import java.util.Objects;
 
 public class UserInterface {
+    private static final String DATA_PATH = "Tess4J/tessdata";
     private JFrame frame;
     private OCR ocr;
     private JTextArea textArea;
+    private JScrollPane scrollPane;
     private JButton convertButton;
+    private JButton selectButton;
 
     public UserInterface() {
         initialize();
@@ -19,17 +23,22 @@ public class UserInterface {
 
     private void initialize() {
         this.frame = new JFrame();
-        this.textArea = new JTextArea();
-        textArea.setPreferredSize(new Dimension(600, 800));
+        this.scrollPane = createScrollPane();
         this.convertButton = new JButton("Convert");
+        convertButton.setEnabled(false);
+        this.selectButton = new JButton("Select image");
         frame.setTitle("OCR Project");
 //        frame.setIconImage();
-        frame.setLayout(new BorderLayout());
+        frame.setLayout(new MigLayout("debug"));
+//        frame.setPreferredSize(new Dimension(800, 1000));
+
         frame.setLocationRelativeTo(null);
 //        frame.getContentPane().setBackground();
         frame.setResizable(false);
-        frame.add(textArea, BorderLayout.CENTER);
-        frame.add(convertButton, BorderLayout.SOUTH);
+        frame.add(createDragAndDropPanel(),"grow, push");
+        frame.add(scrollPane, "wrap");
+        frame.add(selectButton);
+        frame.add(convertButton);
         frame.pack();
         frame.setLocationByPlatform(true);
         frame.setVisible(true);
@@ -51,9 +60,13 @@ public class UserInterface {
         });
 
         convertButton.addActionListener(e -> {
-            File image = getImageFromFileChooser();
-            this.ocr = new OCR(image, "Tess4J/tessdata");
             textArea.setText(ocr.getText());
+        });
+
+        selectButton.addActionListener(e -> {
+            File image = getImageFromFileChooser();
+            this.ocr = new OCR(image, DATA_PATH);
+            convertButton.setEnabled(true);
         });
     }
 
@@ -66,5 +79,22 @@ public class UserInterface {
         }
 
         return null;
+    }
+
+    private JScrollPane createScrollPane() {
+        this.textArea = new JTextArea();
+        JScrollPane scrollPane = new JScrollPane(textArea, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        textArea.setPreferredSize(new Dimension(500, 600));
+        textArea.setFont(new Font("Arial", Font.PLAIN, 16));
+        return scrollPane;
+    }
+
+    private JPanel createDragAndDropPanel() {
+        FileDragAndDrop fileDragAndDrop = new FileDragAndDrop();
+        JPanel dropPanel = fileDragAndDrop.getDropPanel();
+        dropPanel.setBorder(BorderFactory.createTitledBorder("Drop a File Here"));
+        dropPanel.setTransferHandler(fileDragAndDrop);
+        dropPanel.setPreferredSize(new Dimension(200, 200));
+        return dropPanel;
     }
 }
