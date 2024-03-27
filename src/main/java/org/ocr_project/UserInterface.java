@@ -3,6 +3,7 @@ package org.ocr_project;
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
 import net.miginfocom.swing.MigLayout;
+import org.apache.commons.io.FilenameUtils;
 
 import javax.swing.*;
 import java.awt.*;
@@ -52,6 +53,10 @@ public class UserInterface {
         frame.add(selectButton);
         frame.add(convertButton, "split3");
         frame.add(saveButton);
+
+        JComboBox<FileExtension> fileExtensionList = new JComboBox<>(FileExtension.values());
+
+        frame.add(fileExtensionList);
         frame.pack();
         frame.setLocationByPlatform(true);
         frame.setVisible(true);
@@ -76,7 +81,7 @@ public class UserInterface {
             this.ocr = new OCR(fileDragAndDrop.getFile(), DATA_PATH);
             textArea.setText(ocr.getText());
             disableConversion();
-            enableButton(saveButton);
+            saveButton.setEnabled(true);
         });
 
         selectButton.addActionListener(e -> {
@@ -84,6 +89,29 @@ public class UserInterface {
             fileDragAndDrop.setImage(ocr.getImage());
             enableConversion();
         });
+
+        saveButton.addActionListener(e -> createFileChooser((FileExtension) fileExtensionList.getSelectedItem()));
+    }
+
+    private void createFileChooser(FileExtension extension) {
+        JFileChooser fileChooser= new JFileChooser();
+        fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+
+        if (fileChooser.showSaveDialog(frame) == JFileChooser.APPROVE_OPTION) {
+            String filePath = fileChooser.getSelectedFile().getPath();
+
+            if (FilenameUtils.getExtension(filePath).isEmpty()) {
+                filePath += extension.getExtension();
+            }
+
+            switch (extension) {
+                case TXT -> {
+                    SaveToFile.writeToTxtFile(textArea.getText(), filePath);
+                }
+                case DOCX -> System.out.println(FileExtension.DOCX.getExtension());
+                case PDF -> System.out.println(FileExtension.PDF.getExtension());
+            }
+        }
     }
 
     private File getImageFromFileChooser() {
@@ -119,13 +147,5 @@ public class UserInterface {
 
     public static void disableConversion() {
         convertButton.setEnabled(false);
-    }
-
-    public static void enableButton(JButton button) {
-        button.setEnabled(true);
-    }
-
-    public static void disableButton(JButton button) {
-        button.setEnabled(true);
     }
 }
