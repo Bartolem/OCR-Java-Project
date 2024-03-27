@@ -1,5 +1,8 @@
 package org.ocr_project;
 
+import jiconfont.icons.font_awesome.FontAwesome;
+import jiconfont.swing.IconFontSwing;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.datatransfer.*;
@@ -12,18 +15,39 @@ public class FileDragAndDrop extends TransferHandler {
     private ImageIcon imageIcon;
     private final JLabel imageLabel;
     private final JLabel fileNameLabel;
+    private static JButton deleteButton;
 
     FileDragAndDrop() {
-        this.dropPanel = new JPanel(new BorderLayout());
+        this.dropPanel = new JPanel(new GridBagLayout());
+        GridBagConstraints gridBagConstraints = new GridBagConstraints();
+        gridBagConstraints.insets = new Insets(10, 10, 10, 10);
         this.imageIcon = new ImageIcon(new ImageIcon("src/main/resources/upload.png").getImage().getScaledInstance(256, 256, Image.SCALE_SMOOTH));
         this.imageLabel = new JLabel(imageIcon);
         this.fileNameLabel = new JLabel("Drop a file here");
+        deleteButton = new JButton("Delete");
+        deleteButton.setVisible(false);
 
-        fileNameLabel.setFont(new Font("Arial", Font.PLAIN, 22));
+        IconFontSwing.register(FontAwesome.getIconFont());
+        Icon icon = IconFontSwing.buildIcon(FontAwesome.TRASH, 15);
+        deleteButton.setIcon(icon);
+
+        fileNameLabel.setFont(new Font("Arial", Font.BOLD, 28));
+        fileNameLabel.setForeground(Color.BLACK);
         fileNameLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
-        dropPanel.add(fileNameLabel, BorderLayout.NORTH);
-        dropPanel.add(imageLabel, BorderLayout.CENTER);
+        dropPanel.add(fileNameLabel, gridBagConstraints);
+
+        gridBagConstraints.gridy = 5;
+        dropPanel.add(imageLabel, gridBagConstraints);
+
+        gridBagConstraints.gridy = 10;
+        dropPanel.add(deleteButton, gridBagConstraints);
+
+        deleteButton.addActionListener(e -> {
+            this.imageLabel.setIcon(new ImageIcon(new ImageIcon("src/main/resources/upload.png").getImage().getScaledInstance(256, 256, Image.SCALE_SMOOTH)));
+            fileNameLabel.setText("Drop a file here");
+            deleteButton.setVisible(false);
+        });
     }
 
     public JPanel getDropPanel() {
@@ -59,6 +83,7 @@ public class FileDragAndDrop extends TransferHandler {
             setImage(file);
             dropPanel.revalidate();
             dropPanel.repaint();
+            deleteButton.setVisible(true);
             return true;
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());

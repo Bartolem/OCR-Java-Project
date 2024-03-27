@@ -1,5 +1,7 @@
 package org.ocr_project;
 
+import jiconfont.icons.font_awesome.FontAwesome;
+import jiconfont.swing.IconFontSwing;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
@@ -11,7 +13,6 @@ import java.io.File;
 public class UserInterface {
     private static final String DATA_PATH = "Tess4J/tessdata";
     private static JButton convertButton;
-    private static JButton clearButton;
     private static JButton saveButton;
     private JFrame frame;
     private OCR ocr;
@@ -26,9 +27,16 @@ public class UserInterface {
         this.frame = new JFrame();
         this.fileDragAndDrop = new FileDragAndDrop();
         convertButton = new JButton("Convert");
-        clearButton = new JButton("Clear");
         saveButton = new JButton("Save");
-        convertButton.setEnabled(false);
+
+        IconFontSwing.register(FontAwesome.getIconFont());
+        Icon icon = IconFontSwing.buildIcon(FontAwesome.FLOPPY_O, 15);
+        saveButton.setIcon(icon);
+
+        disableConversion();
+
+        saveButton.setEnabled(false);
+
         JScrollPane scrollPane = createScrollPane();
         JButton selectButton = new JButton("Select image");
         frame.setTitle("OCR Project");
@@ -44,7 +52,6 @@ public class UserInterface {
         frame.add(selectButton);
         frame.add(convertButton, "split3");
         frame.add(saveButton);
-        frame.add(clearButton);
         frame.pack();
         frame.setLocationByPlatform(true);
         frame.setVisible(true);
@@ -68,6 +75,8 @@ public class UserInterface {
         convertButton.addActionListener(e -> {
             this.ocr = new OCR(fileDragAndDrop.getFile(), DATA_PATH);
             textArea.setText(ocr.getText());
+            disableConversion();
+            enableButton(saveButton);
         });
 
         selectButton.addActionListener(e -> {
@@ -106,5 +115,17 @@ public class UserInterface {
 
     public static void enableConversion() {
         convertButton.setEnabled(true);
+    }
+
+    public static void disableConversion() {
+        convertButton.setEnabled(false);
+    }
+
+    public static void enableButton(JButton button) {
+        button.setEnabled(true);
+    }
+
+    public static void disableButton(JButton button) {
+        button.setEnabled(true);
     }
 }
