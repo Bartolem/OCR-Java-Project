@@ -72,6 +72,7 @@ public class UserInterface {
 
         selectButton.addActionListener(e -> {
             this.ocr = new OCR(getImageFromFileChooser(), DATA_PATH);
+            fileDragAndDrop.setImage(ocr.getImage());
             enableConversion();
         });
     }

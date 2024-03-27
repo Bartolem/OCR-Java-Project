@@ -30,6 +30,12 @@ public class FileDragAndDrop extends TransferHandler {
         return dropPanel;
     }
 
+    public void setImage(File file) {
+        this.imageIcon = new ImageIcon(new ImageIcon(file.getPath()).getImage().getScaledInstance(372, 480, Image.SCALE_SMOOTH));
+        imageLabel.setIcon(imageIcon);
+        fileNameLabel.setText(file.getName());
+    }
+
     @Override
     public boolean canImport(TransferSupport support) {
         return support.isDataFlavorSupported(DataFlavor.javaFileListFlavor);
@@ -50,9 +56,7 @@ public class FileDragAndDrop extends TransferHandler {
             this.file = files.getFirst();
             // Do something with the dropped file, for example, display its name
             UserInterface.enableConversion();
-            this.imageIcon = new ImageIcon(new ImageIcon(file.getPath()).getImage().getScaledInstance(372, 480, Image.SCALE_SMOOTH));
-            imageLabel.setIcon(imageIcon);
-            fileNameLabel.setText(file.getName());
+            setImage(file);
             dropPanel.revalidate();
             dropPanel.repaint();
             return true;
