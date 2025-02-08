@@ -15,7 +15,9 @@ public class UserInterface {
     private static final String DATA_PATH = "Tess4J/tessdata";
     private static JButton convertButton;
     private static JButton saveButton;
+    private static JButton clearTextButton;
     private JFrame frame;
+    private static File file;
     private OCR ocr;
     private JTextArea textArea;
     private FileDragAndDrop fileDragAndDrop;
@@ -29,34 +31,37 @@ public class UserInterface {
         this.fileDragAndDrop = new FileDragAndDrop();
         convertButton = new JButton("Convert");
         saveButton = new JButton("Save");
+        clearTextButton = new JButton("Clear Text");
 
         IconFontSwing.register(FontAwesome.getIconFont());
-        Icon icon = IconFontSwing.buildIcon(FontAwesome.FLOPPY_O, 15);
-        saveButton.setIcon(icon);
+        saveButton.setIcon(IconFontSwing.buildIcon(FontAwesome.FLOPPY_O, 15));
 
         disableConversion();
 
         saveButton.setEnabled(false);
+        clearTextButton.setEnabled(false);
 
         JScrollPane scrollPane = createScrollPane();
-        JButton selectButton = new JButton("Select image");
+        JButton selectButton = new JButton("Select Image");
+        selectButton.setIcon(IconFontSwing.buildIcon(FontAwesome.FILE_IMAGE_O, 15));
+        convertButton.setIcon(IconFontSwing.buildIcon(FontAwesome.REFRESH, 15));
+        clearTextButton.setIcon(IconFontSwing.buildIcon(FontAwesome.TRASH, 15));
+
         frame.setTitle("OCR Project");
-//        frame.setIconImage();
         frame.setLayout(new MigLayout());
-//        frame.setPreferredSize(new Dimension(800, 1000));
 
         frame.setLocationRelativeTo(null);
-//        frame.getContentPane().setBackground();
         frame.setResizable(false);
         frame.add(createDragAndDropPanel(),"grow, push");
         frame.add(scrollPane, "wrap");
         frame.add(selectButton);
-        frame.add(convertButton, "split3");
+        frame.add(convertButton, "split4");
         frame.add(saveButton);
 
         JComboBox<FileExtension> fileExtensionList = new JComboBox<>(FileExtension.values());
 
         frame.add(fileExtensionList);
+        frame.add(clearTextButton);
         frame.pack();
         frame.setLocationByPlatform(true);
         frame.setVisible(true);
@@ -78,14 +83,28 @@ public class UserInterface {
         });
 
         convertButton.addActionListener(e -> {
-            this.ocr = new OCR(fileDragAndDrop.getFile(), DATA_PATH);
+            if (file == null) {
+                file = fileDragAndDrop.getFile();
+                this.ocr = new OCR(file, DATA_PATH);
+            }
             textArea.setText(ocr.getText());
             disableConversion();
             saveButton.setEnabled(true);
+            clearTextButton.setEnabled(true);
+        });
+
+        clearTextButton.addActionListener(e -> {
+            textArea.setText("");
+            saveButton.setEnabled(false);
+            clearTextButton.setEnabled(false);
+
+            if (file != null) {
+                enableConversion();
+            }
         });
 
         selectButton.addActionListener(e -> {
-            File file = getImageFromFileChooser();
+            file = getImageFromFileChooser();
 
             if (file != null) {
                 this.ocr = new OCR(file, DATA_PATH);
@@ -152,5 +171,9 @@ public class UserInterface {
 
     public static void disableConversion() {
         convertButton.setEnabled(false);
+    }
+
+    public static void removeCurrentImage() {
+        file = null;
     }
 }

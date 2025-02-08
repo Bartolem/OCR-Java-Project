@@ -23,13 +23,12 @@ public class FileDragAndDrop extends TransferHandler {
         gridBagConstraints.insets = new Insets(10, 10, 10, 10);
         this.imageIcon = new ImageIcon(new ImageIcon("src/main/resources/upload.png").getImage().getScaledInstance(256, 256, Image.SCALE_SMOOTH));
         this.imageLabel = new JLabel(imageIcon);
-        this.fileNameLabel = new JLabel("Drop a file here");
+        this.fileNameLabel = new JLabel("Drop a image here");
         deleteButton = new JButton("Delete");
         deleteButton.setVisible(false);
 
         IconFontSwing.register(FontAwesome.getIconFont());
-        Icon icon = IconFontSwing.buildIcon(FontAwesome.TRASH, 15);
-        deleteButton.setIcon(icon);
+        deleteButton.setIcon(IconFontSwing.buildIcon(FontAwesome.TRASH, 15));
 
         fileNameLabel.setFont(new Font("Arial", Font.BOLD, 28));
         fileNameLabel.setForeground(Color.BLACK);
@@ -47,6 +46,8 @@ public class FileDragAndDrop extends TransferHandler {
             this.imageLabel.setIcon(new ImageIcon(new ImageIcon("src/main/resources/upload.png").getImage().getScaledInstance(256, 256, Image.SCALE_SMOOTH)));
             fileNameLabel.setText("Drop a file here");
             deleteButton.setVisible(false);
+            this.file = null;
+            UserInterface.removeCurrentImage();
         });
     }
 
