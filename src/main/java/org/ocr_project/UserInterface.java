@@ -52,14 +52,16 @@ public class UserInterface {
 
         frame.setLocationRelativeTo(null);
         frame.setResizable(false);
+        frame.add(new JLabel("Language: "), "wrap");
         frame.add(createDragAndDropPanel(),"grow, push");
         frame.add(scrollPane, "wrap");
         frame.add(selectButton);
-        frame.add(convertButton, "split4");
+        frame.add(convertButton, "split5");
         frame.add(saveButton);
 
         JComboBox<FileExtension> fileExtensionList = new JComboBox<>(FileExtension.values());
 
+        frame.add(new JLabel("File type: "));
         frame.add(fileExtensionList);
         frame.add(clearTextButton);
         frame.pack();
@@ -129,10 +131,8 @@ public class UserInterface {
             }
 
             switch (extension) {
-                case TXT -> {
-                    SaveToFile.writeToTxtFile(textArea.getText(), filePath);
-                }
-                case DOCX -> System.out.println(FileExtension.DOCX.getExtension());
+                case TXT -> SaveToFile.writeToTxtFile(textArea.getText(), filePath);
+                case DOCX -> SaveToFile.writeToDocxFile(textArea.getText(), filePath);
                 case PDF -> System.out.println(FileExtension.PDF.getExtension());
             }
         }
