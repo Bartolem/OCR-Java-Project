@@ -42,7 +42,7 @@ public class UserInterface {
         JButton selectButton = new JButton("Select image");
         frame.setTitle("OCR Project");
 //        frame.setIconImage();
-        frame.setLayout(new MigLayout("debug"));
+        frame.setLayout(new MigLayout());
 //        frame.setPreferredSize(new Dimension(800, 1000));
 
         frame.setLocationRelativeTo(null);
@@ -85,9 +85,13 @@ public class UserInterface {
         });
 
         selectButton.addActionListener(e -> {
-            this.ocr = new OCR(getImageFromFileChooser(), DATA_PATH);
-            fileDragAndDrop.setImage(ocr.getImage());
-            enableConversion();
+            File file = getImageFromFileChooser();
+
+            if (file != null) {
+                this.ocr = new OCR(file, DATA_PATH);
+                fileDragAndDrop.setImage(ocr.getImage());
+                enableConversion();
+            }
         });
 
         saveButton.addActionListener(e -> createFileChooser((FileExtension) fileExtensionList.getSelectedItem()));

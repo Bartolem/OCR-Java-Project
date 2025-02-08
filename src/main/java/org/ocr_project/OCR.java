@@ -7,7 +7,7 @@ import java.io.File;
 
 public class OCR {
     private File image;
-    private String dataPath;
+    private final String dataPath;
 
     public OCR(File image, String dataPath) {
         this.image = image;
