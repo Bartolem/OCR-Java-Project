@@ -54,6 +54,10 @@ public class FileDragAndDrop extends TransferHandler {
         return dropPanel;
     }
 
+    public void enableDeleteButton() {
+        deleteButton.setVisible(true);
+    }
+
     public void setImage(File file) {
         this.imageIcon = new ImageIcon(new ImageIcon(file.getPath()).getImage().getScaledInstance(372, 480, Image.SCALE_SMOOTH));
         imageLabel.setIcon(imageIcon);
@@ -72,13 +76,11 @@ public class FileDragAndDrop extends TransferHandler {
 
         Transferable transferable = support.getTransferable();
         try {
-            @SuppressWarnings("unchecked")
             List<File> files = (List<File>) transferable.getTransferData(DataFlavor.javaFileListFlavor);
             if (files.size() != 1) {
                 return false; // Only accept one file
             }
             this.file = files.getFirst();
-            // Do something with the dropped file, for example, display its name
             UserInterface.enableConversion();
             setImage(file);
             dropPanel.revalidate();

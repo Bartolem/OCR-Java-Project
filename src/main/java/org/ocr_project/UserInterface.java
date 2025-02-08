@@ -91,6 +91,7 @@ public class UserInterface {
                 this.ocr = new OCR(file, DATA_PATH);
                 fileDragAndDrop.setImage(ocr.getImage());
                 enableConversion();
+                fileDragAndDrop.enableDeleteButton();
             }
         });
 
