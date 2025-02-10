@@ -6,12 +6,13 @@ import net.sourceforge.tess4j.TesseractException;
 import java.io.File;
 
 public class OCR {
+    private static final String DATA_PATH = "Tess4J/tessdata";
     private File image;
-    private final String dataPath;
+    private Language language;
 
-    public OCR(File image, String dataPath) {
+    public OCR(File image, Language language) {
         this.image = image;
-        this.dataPath = dataPath;
+        this.language = language;
     }
 
     public File getImage() {
@@ -22,12 +23,16 @@ public class OCR {
         this.image = image;
     }
 
+    public void setLanguage(Language language) {
+        this.language = language;
+    }
+
     public String getText() {
         Tesseract tesseract = new Tesseract();
 
         try {
-            tesseract.setDatapath(dataPath);
-            tesseract.setLanguage("pol");
+            tesseract.setDatapath(DATA_PATH);
+            tesseract.setLanguage(String.valueOf(language));
 
             return tesseract.doOCR(image);
         } catch (TesseractException e) {

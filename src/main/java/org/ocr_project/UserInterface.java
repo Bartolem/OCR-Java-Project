@@ -12,7 +12,6 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 
 public class UserInterface {
-    private static final String DATA_PATH = "Tess4J/tessdata";
     private static JButton convertButton;
     private static JButton saveButton;
     private static JButton clearTextButton;
@@ -52,7 +51,11 @@ public class UserInterface {
 
         frame.setLocationRelativeTo(null);
         frame.setResizable(false);
-        frame.add(new JLabel("Language: "), "wrap");
+
+        JComboBox<Language> languagesList = new JComboBox<>(Language.values());
+
+        frame.add(new JLabel("Language: "), "split2");
+        frame.add(languagesList, "wrap");
         frame.add(createDragAndDropPanel(),"grow, push");
         frame.add(scrollPane, "wrap");
         frame.add(selectButton);
@@ -87,8 +90,9 @@ public class UserInterface {
         convertButton.addActionListener(e -> {
             if (file == null) {
                 file = fileDragAndDrop.getFile();
-                this.ocr = new OCR(file, DATA_PATH);
+                this.ocr = new OCR(file, (Language) languagesList.getSelectedItem());
             }
+            ocr.setLanguage((Language) languagesList.getSelectedItem());
             textArea.setText(ocr.getText());
             disableConversion();
             saveButton.setEnabled(true);
@@ -109,7 +113,7 @@ public class UserInterface {
             file = getImageFromFileChooser();
 
             if (file != null) {
-                this.ocr = new OCR(file, DATA_PATH);
+                this.ocr = new OCR(file, (Language) languagesList.getSelectedItem());
                 fileDragAndDrop.setImage(ocr.getImage());
                 enableConversion();
                 fileDragAndDrop.enableDeleteButton();
