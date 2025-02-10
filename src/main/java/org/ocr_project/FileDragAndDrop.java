@@ -2,11 +2,15 @@ package org.ocr_project;
 
 import jiconfont.icons.font_awesome.FontAwesome;
 import jiconfont.swing.IconFontSwing;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.rendering.PDFRenderer;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.datatransfer.*;
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 public class FileDragAndDrop extends TransferHandler {
@@ -60,10 +64,33 @@ public class FileDragAndDrop extends TransferHandler {
     }
 
     public void setImage(File file) {
-        this.imageIcon = new ImageIcon(new ImageIcon(file.getPath()).getImage().getScaledInstance(372, 480, Image.SCALE_SMOOTH));
+        if (OCR.isPDF(file)) {
+            BufferedImage pdfImage = convertPdfToImage(file);
+            if (pdfImage != null) {
+                imageIcon = new ImageIcon(pdfImage.getScaledInstance(372, 480, Image.SCALE_SMOOTH));
+            }
+        } else {
+            imageIcon = new ImageIcon(new ImageIcon(file.getPath()).getImage().getScaledInstance(372, 480, Image.SCALE_SMOOTH));
+        }
+
         imageLabel.setIcon(imageIcon);
         fileNameLabel.setFont(new Font("Arial", Font.PLAIN, 18));
         fileNameLabel.setText(file.getName());
+    }
+
+    private BufferedImage convertPdfToImage(File pdfFile) {
+        try {
+            PDDocument document = PDDocument.load(pdfFile);
+            PDFRenderer pdfRenderer = new PDFRenderer(document);
+
+            // Convert first page of PDF to an image
+            BufferedImage image = pdfRenderer.renderImageWithDPI(0, 150);
+
+            document.close();
+            return image;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -84,7 +111,7 @@ public class FileDragAndDrop extends TransferHandler {
             }
             this.file = files.getFirst();
             UserInterface.enableConversion();
-            setImage(file);
+            this.setImage(file);
             dropPanel.revalidate();
             dropPanel.repaint();
             deleteButton.setVisible(true);

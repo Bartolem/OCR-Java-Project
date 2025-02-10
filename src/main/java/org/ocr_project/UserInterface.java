@@ -114,7 +114,8 @@ public class UserInterface {
 
             if (file != null) {
                 this.ocr = new OCR(file, (Language) languagesList.getSelectedItem());
-                fileDragAndDrop.setImage(ocr.getImage());
+
+                fileDragAndDrop.setImage(ocr.getFile());
                 enableConversion();
                 fileDragAndDrop.enableDeleteButton();
             }
