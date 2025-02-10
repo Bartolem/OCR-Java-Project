@@ -44,7 +44,7 @@ public class FileDragAndDrop extends TransferHandler {
 
         deleteButton.addActionListener(e -> {
             this.imageLabel.setIcon(new ImageIcon(new ImageIcon("src/main/resources/upload.png").getImage().getScaledInstance(256, 256, Image.SCALE_SMOOTH)));
-            fileNameLabel.setText("Drop a file here");
+            fileNameLabel.setText("Drop a image here");
             deleteButton.setVisible(false);
             this.file = null;
             UserInterface.removeCurrentImage();
@@ -62,6 +62,7 @@ public class FileDragAndDrop extends TransferHandler {
     public void setImage(File file) {
         this.imageIcon = new ImageIcon(new ImageIcon(file.getPath()).getImage().getScaledInstance(372, 480, Image.SCALE_SMOOTH));
         imageLabel.setIcon(imageIcon);
+        fileNameLabel.setFont(new Font("Arial", Font.PLAIN, 18));
         fileNameLabel.setText(file.getName());
     }
 
